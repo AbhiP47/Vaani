@@ -29,8 +29,9 @@ fun NavGraph() {
         composable(Routes.HOME) {
             HomeScreen(onStartCall = { navController.navigate(Routes.VOICE_CALL) })
         }
-        composable(Routes.VOICE_CALL) {
-            VoiceCallScreen(onEndCall = { navController.popBackStack() })
+        composable("voice_call") {
+            VoiceCallScreen(onEndCall = {
+                navController.popBackStack("home", inclusive = false) })
         }
     }
 }

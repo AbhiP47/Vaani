@@ -61,6 +61,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core:1.7.0")
     implementation("androidx.compose.material:material-icons-extended:1.7.0")
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    implementation("com.google.android.material:material:1.12.0") // Add this for XML theme support
+    implementation(libs.androidx.compose.material3)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
