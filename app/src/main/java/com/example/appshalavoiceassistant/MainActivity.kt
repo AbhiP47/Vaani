@@ -10,12 +10,10 @@ import com.example.appshalavoiceassistant.ui.theme.AppShalaVoiceAssistantTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        // This MUST be the first line before super.onCreate
         val splashScreen = installSplashScreen()
-
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         setContent {
             AppShalaVoiceAssistantTheme {
                 NavGraph()

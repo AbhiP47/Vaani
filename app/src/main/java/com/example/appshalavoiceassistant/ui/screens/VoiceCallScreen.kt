@@ -18,15 +18,16 @@ import com.example.appshalavoiceassistant.ui.animations.VoiceWaveformAnimation
 
 @Composable
 fun VoiceCallScreen(onEndCall: () -> Unit) {
+    // 1. These declarations MUST be inside the function to fix "Unresolved Reference"
     var isMuted by remember { mutableStateOf(false) }
+    var lastClickTime by remember { mutableLongStateOf(0L) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF02040A)), // डार्क बैकग्राउंड
+            .background(Color(0xFF02040A)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // ऊपरी हिस्सा: स्टेटस टेक्स्ट
         Text(
             text = if (isMuted) "आवाज बंद है (Muted)" else "AI सहायक सक्रिय है",
             color = Color.White,
@@ -34,30 +35,21 @@ fun VoiceCallScreen(onEndCall: () -> Unit) {
             modifier = Modifier.padding(top = 60.dp)
         )
 
-        // बीच का हिस्सा: वेवफॉर्म एनीमेशन
         Box(
-            modifier = Modifier
-                .weight(1f) // यह स्क्रीन के बीच की जगह को कवर करेगा
-                .fillMaxWidth(),
+            modifier = Modifier.weight(1f).fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             VoiceWaveformAnimation(isMuted = isMuted)
         }
 
-        // निचला हिस्सा: कॉल कंट्रोल बटन्स
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 60.dp),
+            modifier = Modifier.fillMaxWidth().padding(bottom = 60.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // म्यूट बटन
             IconButton(
                 onClick = { isMuted = !isMuted },
-                modifier = Modifier
-                    .size(60.dp)
-                    .background(Color.White.copy(alpha = 0.1f), CircleShape)
+                modifier = Modifier.size(60.dp).background(Color.White.copy(alpha = 0.1f), CircleShape)
             ) {
                 Icon(
                     imageVector = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
@@ -68,19 +60,20 @@ fun VoiceCallScreen(onEndCall: () -> Unit) {
 
             Spacer(modifier = Modifier.width(40.dp))
 
-            // कॉल कट बटन
             FloatingActionButton(
-                onClick = { onEndCall() }, // यहाँ से आप वापस होम पर जाएंगे
+                onClick = {
+                    val currentTime = System.currentTimeMillis()
+                    // 2. Debounce logic to prevent the "multiple click" bug
+                    if (currentTime - lastClickTime > 1000L) {
+                        lastClickTime = currentTime
+                        onEndCall()
+                    }
+                },
                 containerColor = Color.Red,
                 shape = CircleShape,
                 modifier = Modifier.size(70.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.CallEnd,
-                    contentDescription = "End Call",
-                    tint = Color.White,
-                    modifier = Modifier.size(30.dp)
-                )
+                Icon(Icons.Default.CallEnd, contentDescription = "End", tint = Color.White)
             }
         }
     }
