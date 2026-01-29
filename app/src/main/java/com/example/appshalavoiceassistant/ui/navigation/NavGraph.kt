@@ -32,7 +32,7 @@ fun NavGraph() {
             SplashScreen(onTimeout = {
                 navController.navigate("home") {
                     // This removes splash from the backstack so the user can't go "back" to it
-                    popUpTo("splash") { inclusive = true }
+                    popUpTo("splash") { saveState = true }
                 }
             })
             }
@@ -43,7 +43,7 @@ fun NavGraph() {
                     launchSingleTop = true
 
                     // Optional: Clears the home screen from the stack so you can't go "back" to it
-                    popUpTo("home") { inclusive = false }
+                    popUpTo("home") { saveState = true }
 
                     restoreState = true
                 }

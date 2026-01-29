@@ -60,20 +60,22 @@ fun VoiceCallScreen(onEndCall: () -> Unit) {
 
             Spacer(modifier = Modifier.width(40.dp))
 
+            var lastClickTime by remember { mutableLongStateOf(0L) }
+
             FloatingActionButton(
+                modifier = Modifier.size(60.dp),
+                containerColor = Color(0xFF9C27B0),
                 onClick = {
                     val currentTime = System.currentTimeMillis()
-                    // 2. Debounce logic to prevent the "multiple click" bug
-                    if (currentTime - lastClickTime > 1000L) {
+                    // Only allow the click if more than 500ms has passed since the last one
+                    if (currentTime - lastClickTime > 500L) {
                         lastClickTime = currentTime
                         onEndCall()
                     }
-                },
-                containerColor = Color.Red,
-                shape = CircleShape,
-                modifier = Modifier.size(70.dp)
-            ) {
-                Icon(Icons.Default.CallEnd, contentDescription = "End", tint = Color.White)
+                }
+            )
+            {
+                Icon(Icons.Default.CallEnd, contentDescription = "End Call")
             }
         }
     }
