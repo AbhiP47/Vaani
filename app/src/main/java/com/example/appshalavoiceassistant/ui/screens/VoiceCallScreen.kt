@@ -7,6 +7,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CallEnd
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,9 +20,8 @@ import com.example.appshalavoiceassistant.ui.animations.VoiceWaveformAnimation
 
 @Composable
 fun VoiceCallScreen(onEndCall: () -> Unit) {
-    // 1. These declarations MUST be inside the function to fix "Unresolved Reference"
     var isMuted by remember { mutableStateOf(false) }
-    var lastClickTime by remember { mutableLongStateOf(0L) }
+    var isOnHold by remember { mutableStateOf(false) } // Added hold state
 
     Column(
         modifier = Modifier
@@ -29,9 +30,16 @@ fun VoiceCallScreen(onEndCall: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = if (isMuted) "आवाज बंद है (Muted)" else "AI सहायक सक्रिय है",
-            color = Color.White,
-            fontSize = 18.sp,
+            text = when {
+                isOnHold -> "होल्ड पर है (On Hold)"
+                isMuted -> "आवाज बंद है (Muted)"
+                else -> "VAANI सफलतापूर्वक शुरू हो गई है ✅"
+            },
+            color = when {
+                isOnHold -> Color.Yellow
+                isMuted -> Color.Red
+                else -> Color.White },
+            fontSize = 22.sp,
             modifier = Modifier.padding(top = 60.dp)
         )
 
@@ -39,7 +47,11 @@ fun VoiceCallScreen(onEndCall: () -> Unit) {
             modifier = Modifier.weight(1f).fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            VoiceWaveformAnimation(isMuted = isMuted)
+            // Animation stops moving if on hold or muted
+            VoiceWaveformAnimation(
+                isMuted = isMuted,
+                isOnHold = isOnHold
+            )
         }
 
         Row(
@@ -47,6 +59,7 @@ fun VoiceCallScreen(onEndCall: () -> Unit) {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Mute Button
             IconButton(
                 onClick = { isMuted = !isMuted },
                 modifier = Modifier.size(60.dp).background(Color.White.copy(alpha = 0.1f), CircleShape)
@@ -58,16 +71,36 @@ fun VoiceCallScreen(onEndCall: () -> Unit) {
                 )
             }
 
-            Spacer(modifier = Modifier.width(40.dp))
+            Spacer(modifier = Modifier.width(20.dp))
+
+            // NEW: Hold Button
+            IconButton(
+                onClick = { isOnHold = !isOnHold },
+                modifier = Modifier
+                    .size(60.dp)
+                    .background(
+                        if (isOnHold) Color.White.copy(alpha = 0.4f) else Color.White.copy(alpha = 0.1f),
+                        CircleShape
+                    )
+            ) {
+                Icon(
+                    imageVector = if (isOnHold) Icons.Default.PlayArrow else Icons.Default.Pause,
+                    contentDescription = "Hold",
+                    tint = Color.White
+                )
+            }
+
+            Spacer(modifier = Modifier.width(20.dp))
 
             var lastClickTime by remember { mutableLongStateOf(0L) }
 
+            // End Call Button
             FloatingActionButton(
                 modifier = Modifier.size(60.dp),
                 containerColor = Color(0xFF9C27B0),
+                shape = CircleShape,
                 onClick = {
                     val currentTime = System.currentTimeMillis()
-                    // Only allow the click if more than 500ms has passed since the last one
                     if (currentTime - lastClickTime > 500L) {
                         lastClickTime = currentTime
                         onEndCall()
@@ -75,7 +108,7 @@ fun VoiceCallScreen(onEndCall: () -> Unit) {
                 }
             )
             {
-                Icon(Icons.Default.CallEnd, contentDescription = "End Call")
+                Icon(Icons.Default.CallEnd, contentDescription = "End Call", tint = Color.White)
             }
         }
     }

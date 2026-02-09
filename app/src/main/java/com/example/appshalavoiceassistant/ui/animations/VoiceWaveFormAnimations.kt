@@ -1,28 +1,67 @@
 package com.example.appshalavoiceassistant.ui.animations
 
-import com.example.appshalavoiceassitant.R
-import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.compose.*
 
 @Composable
-fun VoiceWaveformAnimation(
-    isMuted: Boolean,
-    amplitude: Float = 0f
-) {
-    val waveComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.voice_wave))
-    val muteComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.mute_line))
+fun VoiceWaveformAnimation(isMuted: Boolean, isOnHold: Boolean) {
+    val infiniteTransition = rememberInfiniteTransition(label = "waveform")
 
-    val composition = if (isMuted) muteComposition else waveComposition
-    val dynamicSpeed = if (isMuted) 1f else 0.5f + (amplitude * 2f)
+    val barCount = 5
+    val animations = List(barCount) { index ->
+        infiniteTransition.animateFloat(
+            initialValue = 0.2f,
+            // If EITHER state is active, targetValue stays low (no movement)
+            targetValue = if (isMuted || isOnHold) 0.2f else 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(
+                    durationMillis = 400 + (index * 100),
+                    easing = FastOutSlowInEasing
+                ),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "bar_$index"
+        )
+    }
 
-    LottieAnimation(
-        composition = composition,
-        iterations = LottieConstants.IterateForever,
-        speed = dynamicSpeed,
-        modifier = Modifier.size(300.dp)
-    )
+    Box(
+        modifier = Modifier.fillMaxWidth().height(100.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val canvasWidth = size.width
+            val canvasHeight = size.height
+            val barWidth = 15.dp.toPx()
+            val gap = 10.dp.toPx()
+            val totalWidth = (barWidth * barCount) + (gap * (barCount - 1))
+            val startX = (canvasWidth - totalWidth) / 2
+
+            animations.forEachIndexed { index, animValue ->
+                // Flatten the bars if muted or on hold
+                val currentBarHeight = if (isMuted || isOnHold) 10.dp.toPx() else canvasHeight * animValue.value
+                val xOffset = startX + (index * (barWidth + gap))
+                val yOffset = (canvasHeight - currentBarHeight) / 2
+
+                drawRoundRect(
+                    color = when {
+                        isOnHold -> Color.Gray
+                        isMuted -> Color(0xFF9C27B0) // Purple
+                        else -> Color(0xFF9C27B0)
+                    },
+                    topLeft = Offset(xOffset, yOffset),
+                    size = Size(barWidth, currentBarHeight),
+                    cornerRadius = CornerRadius(barWidth / 2, barWidth / 2)
+                )
+            }
+        }
+    }
 }
