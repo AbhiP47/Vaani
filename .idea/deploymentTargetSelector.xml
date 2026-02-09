@@ -5,6 +5,12 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+<<<<<<< HEAD
+=======
+      <SelectionState runConfigName="Active Chat - Muted - ActiveChatMutedPreview">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+>>>>>>> firebaseAIIntegration
     </selectionStates>
   </component>
 </project>
