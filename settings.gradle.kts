@@ -19,10 +19,7 @@ dependencyResolutionManagement {
     }
 }
 
-<<<<<<< HEAD
 rootProject.name = "AppShalaVoice Assistant"
-=======
-rootProject.name = "Appshala Voice Assistant"
->>>>>>> firebaseAIIntegration
+
 include(":app")
  

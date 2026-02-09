@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.appshalavoiceassistant" />
+                  <option name="mobileSdkAppId" value="1:897410949508:android:0a5d05582ba423006ebdd1" />
+                  <option name="projectId" value="appshala-voice-assistant" />
+                  <option name="projectNumber" value="897410949508" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

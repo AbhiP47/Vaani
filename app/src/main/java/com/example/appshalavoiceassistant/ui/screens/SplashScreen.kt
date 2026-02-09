@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.appshalavoiceassitant.R
+import com.example.appshalavoiceassistant.R
 import kotlinx.coroutines.delay
 
 @Composable
